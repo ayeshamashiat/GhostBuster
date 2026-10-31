@@ -95,6 +95,7 @@ class H(BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8780))
-    host = os.environ.get("HOST", "127.0.0.1")   # set HOST=0.0.0.0 when deploying
-    print(f"PetniHunter demo on http://{host}:{port}")
+    # Hosts like Render set PORT and need 0.0.0.0; local runs stay on localhost unless HOST says otherwise.
+    host = os.environ.get("HOST") or ("0.0.0.0" if os.environ.get("PORT") else "127.0.0.1")
+    print(f"PetniHunter demo on http://{host}:{port}", flush=True)
     ThreadingHTTPServer((host, port), H).serve_forever()
