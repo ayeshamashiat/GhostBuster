@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PetniHunter</title>
+<link href="https://fonts.googleapis.com/css2?family=Creepster&family=Noto+Sans+Bengali:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0a12;--card:#161424;--panel:#0f0d1b;--line:#2b2745;--fg:#e9e6f5;--mut:#9a95b5;--glow:#7cf5c8;--bad:#ff6b8b;--warn:#ffd36b}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 50% -10%,#241a3d,var(--bg) 60%) fixed;color:var(--fg);font-family:'Noto Sans Bengali',system-ui,sans-serif;line-height:1.6}
+header{text-align:center;padding:40px 16px 8px}
+h1{font-family:Creepster,cursive;font-size:clamp(2.4rem,8vw,4.2rem);margin:0;color:var(--glow);text-shadow:0 0 24px #7cf5c855;letter-spacing:2px}
+header p{color:var(--mut);max-width:62ch;margin:6px auto}
+main{max-width:1100px;margin:auto;padding:8px 16px 64px}
+form{display:flex;gap:8px;margin:18px 0 10px}
+input{flex:1;min-width:0;padding:14px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--fg);font:inherit;font-size:1.05rem}
+input:focus{outline:2px solid var(--glow);outline-offset:1px}
+button{padding:0 22px;border-radius:10px;border:0;background:var(--glow);color:#0b0a12;font:inherit;font-weight:700;cursor:pointer}
+button:disabled{opacity:.5;cursor:wait}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.chip{background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:.85rem;font-weight:400}
+.chip:hover{border-color:var(--glow)}
+.panels{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;min-height:150px}
+.panel h3{margin:0 0 8px;font-size:.95rem}
+.raw{border-color:#ff6b8b66}.raw h3{color:var(--bad)}
+.det h3{color:var(--warn)}
+.act{border-color:#7cf5c866}.act h3{color:var(--glow)}
+.act.refuse h3,.act.error h3{color:var(--bad)}
+.act.redirect h3{color:var(--warn)}
+.empty{color:var(--mut)}
+.en{color:var(--mut);font-style:italic;font-size:.85rem;margin:8px 0 0;border-top:1px dashed var(--line);padding-top:6px}
+.en b{font-style:normal;font-size:.7rem;letter-spacing:.06em}
+.note{color:var(--mut);font-size:.82rem;text-align:center;margin-top:22px}
+@media(max-width:800px){.panels{grid-template-columns:1fr}form{flex-direction:column}button{padding:12px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>PetniHunter</h1>
+  <p>পেত্নী শিকারি (<i>Petni Hunter</i>, from the Bengali folklore ghost) — ask about a Bangla writer, book or film. See what a raw 4B model invents, and what PetniHunter does about it.</p>
+</header>
+<main>
+  <form id="f">
+    <input id="q" autocomplete="off" maxlength="300" placeholder="যেমন: 'নিশিগন্ধার দিনলিপি' উপন্যাসটি কে লিখেছেন?">
+    <button id="go">জিজ্ঞেস করো</button>
+  </form>
+  <div class="chips" id="chips"></div>
+  <div class="panels">
+    <div class="panel raw"><h3>🤖 Raw model (Qwen3.5-4B)</h3><p id="raw" class="empty">উত্তর এখানে আসবে</p><p id="raw_en" class="en" hidden></p></div>
+    <div class="panel det"><h3>👻 Petni check</h3><p id="det" class="empty">Wikipedia যাচাইয়ের ফল</p><p id="det_en" class="en" hidden></p></div>
+    <div class="panel act" id="actbox"><h3 id="acth">⚔️ Action</h3><p id="act" class="empty">PetniHunter-এর সিদ্ধান্ত</p><p id="act_en" class="en" hidden></p></div>
+  </div>
+  <p class="note">Covers writers' birth years, books' authors, and films' directors, verified against Bangla Wikipedia and Wikidata. It can still be wrong: it only knows what those sources know.</p>
+</main>
+<script>
+const EX = [
+  "'নিশিগন্ধার দিনলিপি' উপন্যাসটি কে লিখেছেন?",
+  "পথের পাঁচালী কার লেখা?",
+  "রবিন্দ্রনাথ ঠাকুর কত সালে জন্মান?",
+  "রবীন্দ্রনাথ ঠাকর কোন সালে জন্মগ্রহণ করেন?",
+  "'ধূসর নদীর ওপারে' চলচ্চিত্রের পরিচালক কে?",
+  "হুমায়ূন আহমেদ কবে জন্মেছিলেন?"
+];
+const $ = id => document.getElementById(id);
+const LABEL = {rescue:"RESCUED ✅", redirect:"REDIRECTED ❓", refuse:"REFUSED 🛑", unsupported:"NOT SUPPORTED", error:"ERROR"};
+function show(el, text){ el.classList.remove("empty"); el.textContent = text; }
+function en(id, text, label){ const e = $(id); if (!text) { e.hidden = true; return; } e.hidden = false; e.innerHTML = ""; const b = document.createElement("b"); b.textContent = label + " "; e.appendChild(b); e.appendChild(document.createTextNode(text)); }
+EX.forEach(t => { const b = document.createElement("button"); b.type="button"; b.className="chip"; b.textContent=t;
+  b.onclick = () => { $("q").value = t; $("f").requestSubmit(); }; $("chips").appendChild(b); });
+$("f").addEventListener("submit", async e => {
+  e.preventDefault();
+  const q = $("q").value.trim(); if (!q) return;
+  $("go").disabled = true;
+  for (const id of ["raw","det","act"]) { $(id).classList.add("empty"); $(id).textContent = "…"; $(id+"_en").hidden = true; }
+  $("actbox").className = "panel act";
+  try {
+    const r = await fetch("/api/ask", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({q})});
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const d = await r.json(), g = d.guard;
+    show($("raw"), d.raw);
+    show($("det"), g.entity ? `নাম: ${g.entity}\nসবচেয়ে কাছের পাতা: ${g.title || "কিছু নেই"}\nমিলের স্কোর: ${g.score ?? "-"}` : "নাম বের করা যায়নি");
+    $("det").style.whiteSpace = "pre-line";
+    $("actbox").className = "panel act " + g.action;
+    $("acth").textContent = "⚔️ Action: " + (LABEL[g.action] || g.action);
+    show($("act"), g.text);
+    en("raw_en", d.raw_en, "EN (machine translation)");
+    en("det_en", g.entity ? `Name: ${g.entity}. Closest page: ${g.title || "none"}. Match score: ${g.score ?? "-"}` : "Could not extract a name", "EN");
+    en("act_en", g.text_en, "EN");
+  } catch (err) {
+    show($("act"), "সার্ভারে সমস্যা: " + err.message + " (Server error: " + err.message + ")");
+  } finally { $("go").disabled = false; }
+});
+</script>
+</body>
+</html>

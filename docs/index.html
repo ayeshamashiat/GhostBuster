@@ -1,0 +1,61 @@
+<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PetniHunter — পেত্নী শিকারি</title>
+<link href="https://fonts.googleapis.com/css2?family=Creepster&family=Noto+Sans+Bengali:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0a12;--card:#161424;--fg:#e9e6f5;--mut:#9a95b5;--glow:#7cf5c8;--bad:#ff6b8b;--warn:#ffd36b}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -10%,#241a3d,var(--bg) 60%);color:var(--fg);font-family:'Noto Sans Bengali',system-ui,sans-serif;line-height:1.6}
+header{text-align:center;padding:48px 16px 16px}h1{font-family:Creepster,cursive;font-size:clamp(2.4rem,8vw,4.5rem);margin:0;color:var(--glow);text-shadow:0 0 24px #7cf5c855;letter-spacing:2px}
+header p{color:var(--mut);max-width:60ch;margin:8px auto}main{max-width:1100px;margin:auto;padding:0 16px 64px}
+.case{background:var(--card);border:1px solid #2b2745;border-radius:14px;padding:18px;margin:24px 0}.case h2{margin:0 0 6px;font-size:1.05rem;color:var(--warn)}
+.q{font-size:1.1rem;margin:4px 0 14px}.panels{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.panel{border-radius:10px;padding:12px;background:#0f0d1b;border:1px solid #2b2745;font-size:.92rem}.panel h3{margin:0 0 6px;font-size:.9rem}.en{color:var(--mut);font-style:italic;font-size:.82rem;border-top:1px dashed var(--line);padding-top:6px;margin:8px 0 0}.en b{font-style:normal;font-size:.68rem;letter-spacing:.06em}
+.raw{border-color:#ff6b8b66}.raw h3{color:var(--bad)}.det h3{color:var(--warn)}.act{border-color:#7cf5c866}.act h3{color:var(--glow)}
+@media(max-width:800px){.panels{grid-template-columns:1fr}}footer{text-align:center;color:var(--mut);padding:24px 16px;font-size:.85rem}
+</style></head><body>
+<header><h1>PetniHunter</h1><p>পেত্নী শিকারি — a hunter for <b>ghost entities</b>: people, books and films a language model invents with total confidence.
+It doesn't just spot them. It refuses, redirects, or rescues the answer with a source.</p>
+<p><small>Every case below is a real recorded output from the test set, not hand-written.</small></p></header>
+<main>
+<section class="case"><h2>Results (2,367 test items, Bangla writers / books / films)</h2>
+<p class="en" style="border:0">Plain model: <b>96%</b> of fake names answered as real. “Say if unsure” prompt: refuses <b>79%</b> of real names. Fine-tune: refuses <b>100%</b>. PetniHunter guard: <b>0.1%</b> fake names answered, <b>86.6%</b> real names answered correctly with a source (F-score 91.9). Metrics: HalluLens false-acceptance rate and SimpleQA F-score. Guard scores are ceilings (same source for lookup and gold answers); see the README for limits.</p>
+<img src="img/01_tradeoff.png" alt="Trade-off chart" style="width:100%;border-radius:10px;margin-top:10px">
+<img src="img/02_fscore.png" alt="F-score chart" style="width:100%;border-radius:10px;margin-top:10px">
+<img src="img/03_guard_outcomes.png" alt="Guard outcomes" style="width:100%;border-radius:10px;margin-top:10px"></section>
+
+<section class="case"><h2>Invented book — the model makes up an author</h2><p class="q">❓ &#x27;আস্বাদের সন্ধান&#x27;-এর লেখক কে?</p><p class="en"><b>EN</b> Who is the author of &quot;Search for Pleasure&quot;?</p>
+<div class="panels">
+ <div class="panel raw"><h3>🤖 Raw model (Qwen3.5-4B)</h3><p>&#x27;আস্বাদের সন্ধান&#x27; গল্পটির লেখক হলেন মহানন্দ বন্দ্যোপাধ্যায়।<br><br>এটি বাংলা সাহিত্যের একটি বিখ্যাত গল্প, যা প্রায়শই শিক্ষামূলক পাঠ্যপুস্তকে বা সাহিত্যিক সংকলনে প্রকাশিত হয়। গল্পটি মূলত মানুষের আবেগ, সম্পর্ক এবং জীবনের বিভিন্ন পরিস্থিতির উপর আলোকপাত করে।</p><p class="en"><b>EN (machine translation)</b> The author of the story &quot;Search for Pleasure&quot; is Mahanand Bandopadhyay. It is a renowned story in Bengali literature, often published in educational textbooks or literary anthologies. The story primarily sheds light on human emotions, relationships, and various life situations.</p></div>
+ <div class="panel det"><h3>👻 Petni check</h3><p>Looked up <b>আস্বাদের সন্ধান</b> on Bangla Wikipedia.<br>Closest page: <b>none</b><br>Match score: 0.417</p></div>
+ <div class="panel act refuse"><h3>⚔️ Action: REFUSED</h3><p>&#x27;আস্বাদের সন্ধান&#x27; নামে বাংলা উইকিপিডিয়ায় নির্ভরযোগ্য কিছু খুঁজে পাইনি, তাই অনুমান করে উত্তর দিচ্ছি না।</p><p class="en"><b>EN</b> I found nothing reliable named &#x27;আস্বাদের সন্ধান&#x27; on Bangla Wikipedia, so I will not guess.</p></div>
+</div></section>
+<section class="case"><h2>Invented writer — the model makes up a birth year</h2><p class="q">❓ আরজু চট্টোপাধ্যায়-এর জন্মসাল কত?</p><p class="en"><b>EN</b> What is Arjun Chatterjee&#x27;s birth year?</p>
+<div class="panels">
+ <div class="panel raw"><h3>🤖 Raw model (Qwen3.5-4B)</h3><p>আরজু চট্টোপাধ্যায়ের জন্মদিনটি ১৯৮৮ সালের ১৫ই মার্চ।<br><br>তিনি একজন জনপ্রিয় ভারতীয় অভিনেত্রী, যিনি মূলত বাংলা ও হিন্দি চলচ্চিত্রের মাধ্যমে পরিচিত। তিনি তার অভিনয় জীবনে বেশ কিছু জনপ্রিয় চরিত্র নিয়েছেন, যেমন &#x27;পাখি&#x27; (২০১৫) এবং &#x27;মোহনবাগাণ&#x27; (২০১৮)।</p><p class="en"><b>EN (machine translation)</b> Arjun Chatterjee&#x27;s birthday is March 15, 1988.<br><br>She is a popular Indian actress, known primarily through Bengali and Hindi cinema. She has portrayed several iconic characters in her acting career, such as in &#x27;Pakhi&#x27; (2015) and &#x27;Mohobobagan&#x27; (2018).</p></div>
+ <div class="panel det"><h3>👻 Petni check</h3><p>Looked up <b>আরজু চট্টোপাধ্যায়</b> on Bangla Wikipedia.<br>Closest page: <b>none</b><br>Match score: 0.812</p></div>
+ <div class="panel act refuse"><h3>⚔️ Action: REFUSED</h3><p>&#x27;আরজু চট্টোপাধ্যায়&#x27; নামে বাংলা উইকিপিডিয়ায় নির্ভরযোগ্য কিছু খুঁজে পাইনি, তাই অনুমান করে উত্তর দিচ্ছি না।</p><p class="en"><b>EN</b> I found nothing reliable named &#x27;আরজু চট্টোপাধ্যায়&#x27; on Bangla Wikipedia, so I will not guess.</p></div>
+</div></section>
+<section class="case"><h2>Invented film — the model makes up a director</h2><p class="q">❓ &#x27;রাত্রির চলতি&#x27; ছবিটি কে পরিচালনা করেছেন?</p><p class="en"><b>EN</b> Who directed the movie &#x27;Ratri Cholti&#x27;?</p>
+<div class="panels">
+ <div class="panel raw"><h3>🤖 Raw model (Qwen3.5-4B)</h3><p>&#x27;রাত্রির চলতি&#x27; (Ratrir Cholti) নামে কোনো নির্দিষ্ট ও জনপ্রিয় চলচ্চিত্রের পরিচালক সম্পর্কে সঠিক তথ্য বর্তমানে প্রকাশিত নেই। সম্ভবত আপনি কোনো ভুল নাম বা ভিন্ন কোনো ছবির কথা বলছেন।<br><br>বাংলা চলচ্চিত্র ইতিহাসে &#x27;রাত&#x27; বা &#x27;রাত্রি&#x27; শব্দ দিয়ে শুরু হওয়া কিছু পরিচিত ছবি আছে, যেমন:<br>*   রাতের গল্প (১৯৫৫): পরিচালনা করেছেন মহেন্দ্র সেন।<br>*   রাতের ঘুম (</p><p class="en"><b>EN (machine translation)</b> There is currently no accurate information available about the director of a specific and popular film titled &#x27;Ratrir Cholti&#x27;. It is possible that you are referring to a misspelled name or a different film.<br><br>There are several well-known films in the history of Bengali cinema that begin with the words &#x27;Rat&#x27; (Night) or &#x27;Ratri&#x27; (Night), such as:<br>*   Rater Golpo (1955): Directed by Mehendra Sen.<br>*   Rater Ghum (</p></div>
+ <div class="panel det"><h3>👻 Petni check</h3><p>Looked up <b>রাত্রির চলতি</b> on Bangla Wikipedia.<br>Closest page: <b>none</b><br>Match score: 0.429</p></div>
+ <div class="panel act refuse"><h3>⚔️ Action: REFUSED</h3><p>&#x27;রাত্রির চলতি&#x27; নামে বাংলা উইকিপিডিয়ায় নির্ভরযোগ্য কিছু খুঁজে পাইনি, তাই অনুমান করে উত্তর দিচ্ছি না।</p><p class="en"><b>EN</b> I found nothing reliable named &#x27;রাত্রির চলতি&#x27; on Bangla Wikipedia, so I will not guess.</p></div>
+</div></section>
+<section class="case"><h2>Real writer, spelled differently — rescued with a source</h2><p class="q">❓ বেবি হালদার-এর জন্মসাল কত?</p><p class="en"><b>EN</b> What is Bibi Halder&#x27;s birth year?</p>
+<div class="panels">
+ <div class="panel raw"><h3>🤖 Raw model (Qwen3.5-4B)</h3><p>বেবি হালদারের জন্মসাল ১৯৮৮।<br><br>তিনি ১৯৮৮ সালের ১৫ই মার্চ জন্মগ্রহণ করেন। তিনি একজন জনপ্রিয় বাংলা অভিনেত্রী, মডেল এবং টেলিভিশন ব্যক্তিত্ব, যিনি মূলত &#x27;সূর্যোদয়&#x27; নামক একটি টেলিভিশন চ্যানেলে কাজ করেন।</p><p class="en"><b>EN (machine translation)</b> Babi Halder was born in 1988. She was born on March 15, 1988. She is a popular Bengali actress, model, and television personality who primarily works on the &#x27;Surjoyoy&#x27; television channel.</p></div>
+ <div class="panel det"><h3>👻 Petni check</h3><p>Looked up <b>বেবি হালদার</b> on Bangla Wikipedia.<br>Closest page: <b>বেবী হালদার</b><br>Match score: 1.0</p></div>
+ <div class="panel act rescue"><h3>⚔️ Action: RESCUED</h3><p>বেবী হালদার (&#x27;বেবি হালদার&#x27; বলতে &#x27;বেবী হালদার&#x27; ধরে নিয়েছি): 1973 সালে জন্মগ্রহণ করেন। [সূত্র: Wikidata Q145346]</p><p class="en"><b>EN</b> বেবী হালদার (I read &#x27;বেবি হালদার&#x27; as &#x27;বেবী হালদার&#x27;): born in 1973. [source: Wikidata Q145346]</p></div>
+</div></section>
+<section class="case"><h2>Typo of a real name — “did you mean…?”</h2><p class="q">❓ সখারাম গনেশ দেউস্কর কোন সালে জন্মগ্রহণ করেন?</p><p class="en"><b>EN</b> In which year was Sakharam Ganesh Deuskar born?</p>
+<div class="panels">
+ <div class="panel raw"><h3>🤖 Raw model (Qwen3.5-4B)</h3><p>সখারাম গনেশ দেউস্কর (Sakharam Ganesh Deuskar) হলেন ভারতের একজন বিখ্যাত রাজনীতিবিদ এবং ভারতীয় জাতীয় কংগ্রেসের একজন দীর্ঘদিনের নেতা। তিনি মূলত মধ্যপ্রদেশ রাজ্যের রাজনীতিতে সক্রিয় ছিলেন।<br><br>তিনি ১৯২৩ সালে জন্মগ্রহণ করেন।</p><p class="en"><b>EN (machine translation)</b> Sakharam Ganesh Deuskar was a prominent Indian politician and a long-time leader of the Indian National Congress. He was primarily active in the politics of the Madhya Pradesh state. He was born in 1923.</p></div>
+ <div class="panel det"><h3>👻 Petni check</h3><p>Looked up <b>সখারাম গনেশ দেউস্কর</b> on Bangla Wikipedia.<br>Closest page: <b>সখারাম গণেশ দেউস্কর</b><br>Match score: 1.0</p></div>
+ <div class="panel act redirect"><h3>⚔️ Action: REDIRECTED</h3><p>&#x27;সখারাম গনেশ দেউস্কর&#x27; নামে হুবহু কিছু খুঁজে পাইনি। আপনি কি &#x27;সখারাম গণেশ দেউস্কর&#x27; বোঝাতে চেয়েছেন?</p><p class="en"><b>EN</b> I found nothing named exactly &#x27;সখারাম গনেশ দেউস্কর&#x27;. Did you mean &#x27;সখারাম গণেশ দেউস্কর&#x27;?</p></div>
+</div></section>
+<section class="case"><h2>Real entity the model got wrong — corrected from Wikidata</h2><p class="q">❓ জীবনতারা হালদার-এর জন্মসাল কত?</p><p class="en"><b>EN</b> What is the birth year of Jibontara Halder?</p>
+<div class="panels">
+ <div class="panel raw"><h3>🤖 Raw model (Qwen3.5-4B)</h3><p>জীবনতারা হালদার (জন্ম নাম: জীবনতারা দেব) একজন বিখ্যাত ভারতীয় অভিনেত্রী, যিনি মূলত ১৯৮৩ সালে জন্মগ্রহণ করেছেন।<br><br>তিনি ১৯৮৩ সালের ১৫ই মার্চ, কলকাতায় জন্মগ্রহণ করেন। তিনি ২০০০ সালে &#x27;শ্রীমন্ত&#x27; চলচ্চিত্রের মাধ্যমে সিনেমা জগতে প্রবেশ করেন এবং এরপর থেকে ভারতীয় চলচ্চিত্র ইন্ডাস্ট্রিতে তার নাম পরি</p><p class="en"><b>EN (machine translation)</b> Jibonata Haldar (birth name: Jibonata Devi) is a renowned Indian actress who was born in 1983. She was born on March 15, 1983, in Kolkata. She entered the cinema world in 2000 with the film &#x27;Shrimant&#x27; and since then, her name has become well-known in the Indian film industry.</p></div>
+ <div class="panel det"><h3>👻 Petni check</h3><p>Looked up <b>জীবনতারা হালদার</b> on Bangla Wikipedia.<br>Closest page: <b>জীবনতারা হালদার</b><br>Match score: 1.0</p></div>
+ <div class="panel act rescue"><h3>⚔️ Action: RESCUED</h3><p>জীবনতারা হালদার: 1893 সালে জন্মগ্রহণ করেন। [সূত্র: Wikidata Q105965038]</p><p class="en"><b>EN</b> জীবনতারা হালদার: born in 1893. [source: Wikidata Q105965038]</p></div>
+</div></section></main>
+<footer>Qwen3.5-4B via Tinker · Bangla Wikipedia + Wikidata · fonts: Creepster (OFL)</footer></body></html>

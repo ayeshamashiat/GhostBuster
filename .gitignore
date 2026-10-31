@@ -1,0 +1,19 @@
+
+audit/.key.json
+build/
+# Build output
+dist/
+*.egg-info/
+.env
+.env.*
+IMPLEMENTATION_PLAN.md
+logs/
+# Private working notes: do not commit
+*.pyc
+__pycache__/
+.pytest_cache/
+# Python
+.venv/
+video/list.txt
+video/scenes/
+!.env.example

@@ -1,0 +1,19 @@
+# One-click deploy: Render dashboard -> New -> Blueprint -> pick this repo.
+services:
+  - type: web
+    name: petnihunter
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m petnihunter.app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      - key: HOST
+        value: 0.0.0.0
+      - key: LIMIT_PER_IP_HOUR   # protects your Tinker credit from abuse
+        value: "20"
+      - key: LIMIT_PER_DAY
+        value: "300"
+      - key: TINKER_API_KEY      # paste the value in the Render dashboard; never commit it
+        sync: false
